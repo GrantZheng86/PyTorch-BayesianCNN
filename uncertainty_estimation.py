@@ -35,11 +35,19 @@ def init_dataset(notmnist_dir):
 
 
 def get_uncertainty_per_image(model, input_image, T=15, normalized=False):
+    """
+
+    :param model:   Model for prediction
+    :param input_image:
+    :param T: Number of iterations on predicting the image
+    :param normalized:
+    :return:
+    """
     input_image = input_image.unsqueeze(0)
-    input_images = input_image.repeat(T, 1, 1, 1)
+    input_images = input_image.repeat(T, 1, 1, 1)   # The number of samples to get different prediction output
 
     net_out, _ = model(input_images)
-    pred = torch.mean(net_out, dim=0).cpu().detach().numpy()
+    pred = torch.mean(net_out, dim=0).cpu().detach().numpy()    # Averaging the prediction from numerous results
     if normalized:
         prediction = F.softplus(net_out)
         p_hat = prediction / torch.sum(prediction, dim=1).unsqueeze(1)
